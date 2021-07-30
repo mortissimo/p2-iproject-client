@@ -1,26 +1,30 @@
 <template>
 <section class='navigation'>
   <nav class="navbar navbar-dark bg-dark">
-  <div class="container-fluid">
+  <div class="container-fluid" >
     <a class="navbar-brand"><h2><i class="fas fa-smile"></i>  Watch2Gether</h2></a>
-    <form class="d-flex" @submit.prevent='changeUrl' v-if='inRoom'>
+    <div :class='notCollapse'>
+    <form class="d-flex" @submit.prevent='changeUrl' v-if='inRoom' :class='notCollapse'>
       <input class="form-control me-2" type="search" placeholder="youtube url..." aria-label="Search" v-model='link'>
       <button class="btn btn-outline-danger" type="submit">Watch</button>
     </form>
+    </div>
+    <div :class='notCollapse'>
     <button  v-if='inRoom' @click.prevent='toSearchPage' class='d-flex btn btn-danger'>Search Your Video here !</button>
+    </div>
     <button v-if='!inRoom' class='d-flex btn btn-danger' @click.prevent='toRoom'>Enter Room</button>
   </div>
 </nav>
-<!-- <div class='row'>
-  <form class="d-flex" @submit.prevent='changeUrl' v-if='inRoom'>
+<div class='row' :class='isCollapse'>
+  <form class="d-flex"  @submit.prevent='changeUrl' v-if='inRoom' >
       <input class="form-control me-2" type="search" placeholder="youtube url..." aria-label="Search" v-model='link'>
       <button class="btn btn-outline-danger" type="submit">Watch</button>
     </form>
 </div>
 
-<div class='row' >
+<div class='row' :class='isCollapse'>
   <button v-if='inRoom' @click.prevent='toSearchPage' class=' btn btn-danger form control'>Search Your Video here !</button>
-</div> -->
+</div>
 </section>
 </template>
 <script>
@@ -35,10 +39,21 @@ export default {
     data(){
         return {
             link : '',
-            hasName: localStorage.getItem('name')
+            hasName: localStorage.getItem('name'),
+            isCollapse:'collapse',
+            notCollapse:''
         }  
     },
     methods:{
+         onResize() {
+          if (window.innerWidth < 860) {
+            this.isCollapse = '';
+            this.notCollapse = 'collapse'
+          }else if(window.innerWidth >= 860){
+            this.isCollapse = 'collapse';
+            this.notCollapse = '';
+          }
+        },
         changeUrl(){
             this.$socket.emit('changeUrl', this.link)
         },
